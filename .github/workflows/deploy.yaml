@@ -44,7 +44,7 @@ jobs:
         uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
           name: infraestructure
-          template: ./infraestructure.yml
+          template: ./infraestructure.yaml
           no-fail-on-empty-changeset: "1"
 
 
