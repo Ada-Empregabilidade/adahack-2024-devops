@@ -4,22 +4,20 @@ Resources:
   Ec2InstanceZoneA:
     Type: 'AWS::EC2::Instance'
     Properties:
-      ImageId: ami-080e1f13689e07408
+      ImageId: ami-051f8a213df8bc089
       InstanceType: t2.micro
       SubnetId: subnet-0b17283f1e058ea64
       SecurityGroupIds:
       - !Ref Ec2SecurityGroup
       UserData: 
-        Fn::Base64: 
-          Fn::Join:
-            - ":"
-            - - "#!/bin/bash"
-              - "sudo yum update -y"
-              - "sudo yum install docker -y"
-              - "sudo usermod -aG docker $(whoami)"
-              - "sudo systemctl start docker"
-              - "sudo systemctl enable docker"
-              - "sudo docker run -d --name container marcotfm/zoologico-ada:latest"
+        Fn::Base64: |
+          #!/bin/bash
+          sudo yum update -y
+          sudo yum install docker -y
+          sudo usermod -aG docker $(whoami)
+          sudo systemctl start docker
+          sudo systemctl enable docker
+          sudo docker run -d --name container marcotfm/zoologico-ada:latest
     DependsOn: Ec2SecurityGroup
 
   Ec2SecurityGroup:
