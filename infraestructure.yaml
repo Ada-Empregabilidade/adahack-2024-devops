@@ -14,6 +14,17 @@ Resources:
       SubnetId: !Ref FirstSubnet
       SecurityGroupIds:
       - !Ref Ec2SecurityGroup
+      UserData: 
+        Fn::Base64: 
+          Fn::Sub: |
+            #!/bin/bash
+            sudo yum update -y
+            sudo yum install docker -y
+            sudo usermod -aG docker $(whoami)
+            sudo systemctl start docker
+            sudo systemctl enable docker
+            sudo docker run -d --name container marcotfm/zoologico-ada:latest
+
     DependsOn: Ec2SecurityGroup
 
   Ec2SecurityGroup:
