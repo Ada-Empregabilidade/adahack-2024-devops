@@ -12,11 +12,9 @@ Resources:
       UserData: 
         Fn::Base64: |
           #!/bin/bash
-          sudo yum update -y
-          sudo yum install docker -y
+          sudo apt update -y
+          sudo apt install docker.io -y
           sudo usermod -aG docker $(whoami)
-          sudo systemctl start docker
-          sudo systemctl enable docker
           sudo docker run -d --name container marcotfm/zoologico-ada:latest
     DependsOn: Ec2SecurityGroup
 
