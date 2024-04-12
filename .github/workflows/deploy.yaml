@@ -38,6 +38,13 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: <sua-regiao>
+          aws-region: us-east-1
+
+      - name: Deploy VPC
+        uses: aws-actions/aws-cloudformation-github-deploy@v1
+        with:
+          name: infraestructure
+          template: ./infraestructure.yml
+          no-fail-on-empty-changeset: "1"
 
 
