@@ -53,13 +53,10 @@ jobs:
       - name: SSH and deploy
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.SSH_HOST }}  # Suponho que você tenha definido SSH_HOST como o IP do EC2
+          host: ${{ steps.list_ec2_instances.outputs.ec2_ips }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            IFS=$'\n'  # Define o separador como nova linha
-            for ip in ${{ steps.list_ec2_instances.outputs.ec2_ips }}; do
-              echo "Conectando ao EC2 instance em $ip"
-              # Coloque aqui os comandos SSH que você deseja executar em cada EC2
-            done
+            echo "Conectando ao EC2 instance em ${{ github.event.inputs.host }}"
+            # Comandos SSH aqui (por exemplo, atualização do Docker)
