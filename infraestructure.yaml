@@ -1,9 +1,4 @@
 Description: App deploy template v0.1
-Parameters:
-  VpcId:
-    Type: AWS::EC2::VPC::Id
-  FirstSubnet:
-    Type: AWS::EC2::Subnet::Id
 
 Resources:
   Ec2InstanceZoneA:
@@ -11,27 +6,27 @@ Resources:
     Properties:
       ImageId: ami-051f8a213df8bc089
       InstanceType: t2.micro
-      SubnetId: !Ref FirstSubnet
+      SubnetId: subnet-0b17283f1e058ea64
       SecurityGroupIds:
       - !Ref Ec2SecurityGroup
       UserData: 
         Fn::Base64: 
           Fn::Join:
-            - ""
-            - - "#!/bin/bash\n"
-              - "sudo yum update -y\n"
-              - "sudo yum install docker -y\n"
-              - "sudo usermod -aG docker $(whoami)\n"
-              - "sudo systemctl start docker\n"
-              - "sudo systemctl enable docker\n"
-              - "sudo docker run -d --name container marcotfm/zoologico-ada:latest\n"
+            - ":"
+            - - "#!/bin/bash"
+              - "sudo yum update -y"
+              - "sudo yum install docker -y"
+              - "sudo usermod -aG docker $(whoami)"
+              - "sudo systemctl start docker"
+              - "sudo systemctl enable docker"
+              - "sudo docker run -d --name container marcotfm/zoologico-ada:latest"
     DependsOn: Ec2SecurityGroup
 
   Ec2SecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Allows HTTP and SSH for EC2
-      VpcId: !Ref VpcId
+      VpcId: vpc-05df277baf4e93b8b
       SecurityGroupIngress:
       - IpProtocol: tcp
         FromPort: 80
