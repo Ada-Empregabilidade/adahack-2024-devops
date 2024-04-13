@@ -72,7 +72,7 @@ Resources:
         - !Ref MyLoadBalancerTargetGroup
       LaunchTemplate: 
         LaunchTemplateId: !Ref MyLaunchTemplate
-        Version: !GetAtt MyLaunchTe mplate.LatestVersionNumber
+        Version: !GetAtt MyLaunchTemplate.LatestVersionNumber
       MaxSize: '4'
       MinSize: '2'
       DesiredCapacity: '2'
