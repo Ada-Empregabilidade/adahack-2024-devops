@@ -86,7 +86,7 @@ Resources:
             - GroupMaxSize
       Tags: 
         - Key: Name
-          Value: MyApp-instance
+          Value: Hackaton
           PropagateAtLaunch: true
 
   MyLaunchTemplate:
@@ -101,12 +101,12 @@ Resources:
         SecurityGroupIds: 
           - !Ref Ec2SecurityGroup
         UserData: 
-        Fn::Base64: |
-          #!/bin/bash
-          sudo apt update -y
-          sudo apt install docker.io -y
-          sudo usermod -aG docker $(whoami)
-          sudo docker run -d -p 80:8000 --name container marcotfm/zoologico-ada:latest
+          Fn::Base64: |
+            #!/bin/bash
+            sudo apt update -y
+            sudo apt install docker.io -y
+            sudo usermod -aG docker $(whoami)
+            sudo docker run -d -p 80:8000 --name container marcotfm/zoologico-ada:latest
 
   MyScalingPolicie:
     Type: AWS::AutoScaling::ScalingPolicy
@@ -117,8 +117,8 @@ Resources:
       TargetTrackingConfiguration:
         PredefinedMetricSpecification:
           PredefinedMetricType: ALBRequestCountPerTarget
-          ResourceLabel: !Join 
-            '/' 
-            !GetAtt MyLoadBalancer.LoadBalancerFullName
-            !GetAtt MyLoadBalancerTargetGroup.TargetGroupFullName
+          ResourceLabel: !Join
+            '/'
+            - !GetAtt MyLoadBalancer.LoadBalancerFullName
+            - !GetAtt MyLoadBalancerTargetGroup.TargetGroupFullName
         TargetValue: 1
