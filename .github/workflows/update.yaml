@@ -31,6 +31,7 @@ jobs:
             marcotfm/zoologico-ada:latest
     
   deploy:
+    needs: CI
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code from main branch
@@ -55,5 +56,5 @@ jobs:
         run: |
             echo "$PRIVATE_KEY" > private.pem
             chmod 600 private.pem
-            ssh -o StrictHostKeyChecking=no -i private.pem ubuntu@52.87.99.165 'docker pull marcotfm/zoologico-ada:v2 && docker stop container && docker rm container && docker run -d --name container marcotfm/zoologico-ada:latest'
+            ssh -o StrictHostKeyChecking=no -i private.pem ubuntu@52.87.99.165 'sudo docker pull marcotfm/zoologico-ada:v2 && sudo docker stop container && sudo docker rm container && sudo docker run -d --name container marcotfm/zoologico-ada:latest'
   
