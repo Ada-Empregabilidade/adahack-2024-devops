@@ -30,6 +30,7 @@ jobs:
             marcotfm/zoologico-ada:latest
 
   deploy:
+    needs: CI
     runs-on: ubuntu-latest
     outputs:
       ec2_ips: ${{ steps.list_ec2_instances.outputs.ec2_ips }}
@@ -62,5 +63,5 @@ jobs:
           IFS=' ' read -r -a ips <<<"${{ needs.deploy.outputs.ec2_ips }}"
           for public_ip in "${ips[@]}"; do
             echo "Connecting to EC2 instance at $public_ip"
-            ssh -i .private-key ubuntu@"$public_ip" 'docker pull marcotfm/zoologico-ada:latest && docker stop container && docker rm container && docker run -d --name container marcotfm/zoologico-ada:latest'
+            ssh -o StrictHostKeyChecking=no -i .private-key ubuntu@100.26.149.85 'docker pull marcotfm/zoologico-ada:latest && docker stop container && docker rm container && docker run -d --name container marcotfm/zoologico-ada:latest'
           done
