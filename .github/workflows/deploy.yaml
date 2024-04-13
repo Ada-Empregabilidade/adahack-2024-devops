@@ -41,11 +41,14 @@ jobs:
         run: |
           if git diff --exit-code HEAD^ HEAD -- infraestructure.yaml &> /dev/null; then
             echo "No CFN changes detected."
-            echo "::set-output name=changes_detected::false"
+            changes_detected="false"
           else
-            echo "CFN changes detected."
-            echo "::set-output name=changes_detected::true"
+              echo "CFN changes detected."
+              changes_detected="true"
           fi
+          
+          echo "::set-output name=changes_detected::$changes_detected"
+    
     
 
       - name: Configure AWS Credentials
