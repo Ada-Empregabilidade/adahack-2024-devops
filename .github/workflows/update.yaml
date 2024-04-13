@@ -60,6 +60,7 @@ jobs:
       - name: SSH into EC2 and Run Docker Commands
         run: |
           echo "${PRIVATE_KEY}" > .private-key
+          chmod 600 .private-key
           IFS=' ' read -r -a ips <<<"${{ needs.deploy.outputs.ec2_ips }}"
           for public_ip in "${ips[@]}"; do
             echo "Connecting to EC2 instance at $public_ip"
