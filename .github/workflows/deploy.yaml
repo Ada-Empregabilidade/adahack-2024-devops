@@ -39,13 +39,14 @@ jobs:
       - name: Check CloudFormation Changes
         id: cfn_changes
         run: |
-          if git diff --quiet HEAD^ HEAD -- infraestructure.yaml; then
-              echo "No CFN changes detected."
-              echo "::set-output name=changes_detected::false"
+          if git diff --exit-code HEAD^ HEAD -- infraestructure.yaml &> /dev/null; then
+            echo "No CFN changes detected."
+            echo "::set-output name=changes_detected::false"
           else
-              echo "CFN changes detected."
-              echo "::set-output name=changes_detected::true"
+            echo "CFN changes detected."
+            echo "::set-output name=changes_detected::true"
           fi
+    
 
       - name: Configure AWS Credentials
         if: steps.cfn_changes.outputs.changes_detected == 'true'
