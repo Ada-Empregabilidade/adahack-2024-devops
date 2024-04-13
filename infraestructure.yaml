@@ -117,8 +117,8 @@ Resources:
       TargetTrackingConfiguration:
         PredefinedMetricSpecification:
           PredefinedMetricType: ALBRequestCountPerTarget
-          ResourceLabel: !Join
-            '/'
-            - !GetAtt MyLoadBalancer.LoadBalancerFullName
-            - !GetAtt MyLoadBalancerTargetGroup.TargetGroupFullName
+          ResourceLabel: !Join 
+            - '/' 
+            - - !GetAtt MyLoadBalancer.LoadBalancerFullName
+              - !GetAtt MyLoadBalancerTargetGroup.TargetGroupFullName
         TargetValue: 1
