@@ -1,4 +1,5 @@
 name: "Atualizar Ec2"
+
 on:
   push:
     branches:
@@ -32,8 +33,6 @@ jobs:
   deploy:
     needs: CI
     runs-on: ubuntu-latest
-    outputs:
-      ec2_ips: ${{ steps.list_ec2_instances.outputs.ec2_ips }}
     steps:
       - name: Checkout code from main branch
         uses: actions/checkout@v2
@@ -51,18 +50,13 @@ jobs:
           ec2_ips=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
           echo "::set-output name=ec2_ips::$ec2_ips"
 
-  update_ec2:
-    needs: deploy
-    runs-on: ubuntu-latest
-    env:
-      PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-    steps:
-      - name: SSH into EC2 and Run Docker Commands
-        run: |
-          echo "${PRIVATE_KEY}" > .private-key
-          chmod 600 .private-key
-          IFS=' ' read -r -a ips <<<"${{ needs.deploy.outputs.ec2_ips }}"
-          for public_ip in "${ips[@]}"; do
-            echo "Connecting to EC2 instance at $public_ip"
-            ssh -o StrictHostKeyChecking=no -i "${PRIVATE_KEY}" ubuntu@$public_ip 'docker pull marcotfm/zoologico-ada:latest && docker stop container && docker rm container && docker run -d --name container marcotfm/zoologico-ada:latest'
-          done
+      - name: SSH and deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ steps.list_ec2_instances.outputs.ec2_ips }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            echo "Conectando ao EC2 instance em ${{ github.event.inputs.host }}"
+            # Comandos SSH aqui (por exemplo, atualização do Docker)
