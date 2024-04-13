@@ -39,10 +39,18 @@ jobs:
       - name: Check CloudFormation Changes
         id: cfn_changes
         run: |
-          git diff --quiet HEAD^ infraestructure.yaml || echo "CFN changes detected."
+          git fetch --prune
+          changes=$(git diff --name-only HEAD^ HEAD)
+          if [[ $changes == *"infraestructure.yaml"* ]]; then
+            echo "CFN changes detected."
+            echo "::set-output name=changes_detected::true"
+          else
+            echo "No CFN changes detected."
+            echo "::set-output name=changes_detected::false"
+          fi
 
       - name: Configure AWS Credentials
-        if: steps.cfn_changes.outputs.stdout != ''
+        if: steps.cfn_changes.outputs.changes_detected == 'true'
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -50,7 +58,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Deploy VPC
-        if: steps.cfn_changes.outputs.stdout != ''
+        if: steps.cfn_changes.outputs.changes_detected == 'true'
         uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
           name: infraestructure
@@ -58,6 +66,7 @@ jobs:
           no-fail-on-empty-changeset: "1"
 
       - name: Get EC2 Instance IPs
+        if: steps.cfn_changes.outputs.changes_detected == 'false'
         id: get_ec2_ips
         run: |
           aws cloudformation describe-stack-resources \
@@ -66,7 +75,7 @@ jobs:
             --output text > ec2_ips.txt
 
       - name: SSH into EC2 and Run Docker
-        if: steps.cfn_changes.outputs.stdout == ''
+        if: steps.cfn_changes.outputs.changes_detected == 'false'
         run: |
           echo ${{ secrets.PRIVATE_KEY }} >> .private-key
           cat ec2_ips.txt | while read ip; do
