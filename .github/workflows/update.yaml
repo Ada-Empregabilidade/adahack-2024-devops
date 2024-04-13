@@ -53,7 +53,7 @@ jobs:
       - name: SSH and deploy
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ steps.list_ec2_instances.outputs.ec2_ips }}
+          host: ${{ secrets.SSH_HOST }}  # Suponho que você tenha definido SSH_HOST como o IP do EC2
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
