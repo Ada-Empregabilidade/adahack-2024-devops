@@ -58,5 +58,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            echo "Conectando ao EC2 instance em ${{ github.event.inputs.host }}"
-            # Comandos SSH aqui (por exemplo, atualização do Docker)
+            IFS=$'\n'       # Definindo o separador como nova linha
+            for ip in ${{ steps.list_ec2_instances.outputs.ec2_ips }}; do
+              echo "Conectando ao EC2 instance em $ip"
+              # Comandos SSH aqui (por exemplo, atualização do Docker)
+            done
