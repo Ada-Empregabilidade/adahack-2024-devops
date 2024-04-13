@@ -37,10 +37,6 @@ Resources:
       HealthCheckPort: 80
       VpcId: vpc-05df277baf4e93b8b
       TargetType: instance
-      Targets:
-      - Id: subnet-0b17283f1e058ea64
-      - Id: subnet-0c54aeebf0a6238ec
-
 
   MyLoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
