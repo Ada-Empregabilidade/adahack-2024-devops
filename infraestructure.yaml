@@ -1,23 +1,6 @@
 Description: App deploy template v0.1
 
 Resources:
-  Ec2InstanceZoneA:
-    Type: 'AWS::EC2::Instance'
-    Properties:
-      ImageId: ami-080e1f13689e07408
-      InstanceType: t2.micro
-      SubnetId: subnet-0b17283f1e058ea64
-      SecurityGroupIds:
-      - !Ref Ec2SecurityGroup
-      UserData: 
-        Fn::Base64: |
-          #!/bin/bash
-          sudo apt update -y
-          sudo apt install docker.io -y
-          sudo usermod -aG docker $(whoami)
-          sudo docker run -d -p 80:8000 --name container marcotfm/zoologico-ada:latest
-    DependsOn: Ec2SecurityGroup
-
   Ec2SecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -32,3 +15,110 @@ Resources:
         FromPort: 22
         ToPort: 22
         CidrIp: 0.0.0.0/0
+
+  MySecurityGroupALB:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Group for application load balancer
+      VpcId: vpc-05df277baf4e93b8b
+      GroupName: SGP-ALB
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+
+  MyLoadBalancerTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: "LoadBalancerTargetGroup"
+      Port: 80
+      Protocol: HTTP
+      HealthCheckPort: 80
+      VpcId: vpc-05df277baf4e93b8b
+      TargetType: instance
+      Targets:
+      - Id: subnet-0b17283f1e058ea64
+      - Id: subnet-0c54aeebf0a6238ec
+
+
+  MyLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: "LoadBalancer"
+      SecurityGroups:
+        - !Ref MySecurityGroupALB
+      Subnets:
+        - subnet-0b17283f1e058ea64
+        - subnet-0c54aeebf0a6238ec
+
+  MyLoadBalancerListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref MyLoadBalancer
+      Protocol: HTTP
+      Port: 80
+      DefaultActions:
+      - Type: forward
+        ForwardConfig:
+          TargetGroups:
+          - TargetGroupArn: !Ref MyLoadBalancerTargetGroup
+            Weight: 1
+  MyASG:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      AutoScalingGroupName: MyAutoScalingGroupName
+      TargetGroupARNs:
+        - !Ref MyLoadBalancerTargetGroup
+      LaunchTemplate: 
+        LaunchTemplateId: !Ref MyLaunchTemplate
+        Version: !GetAtt MyLaunchTe mplate.LatestVersionNumber
+      MaxSize: '4'
+      MinSize: '2'
+      DesiredCapacity: '2'
+      VPCZoneIdentifier:
+        - subnet-0b17283f1e058ea64
+        - subnet-0c54aeebf0a6238ec
+      MetricsCollection:
+        - Granularity: 1Minute
+          Metrics: 
+            - GroupMinSize
+            - GroupMaxSize
+      Tags: 
+        - Key: Name
+          Value: MyApp-instance
+          PropagateAtLaunch: true
+
+  MyLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateName: MyLaunchTemplate
+      VersionDescription: MyApp Template for Hackaton
+      LaunchTemplateData:
+        ImageId: ami-080e1f13689e07408
+        InstanceType: t2.micro
+        KeyName: adaHackaton
+        SecurityGroupIds: 
+          - !Ref Ec2SecurityGroup
+        UserData: 
+        Fn::Base64: |
+          #!/bin/bash
+          sudo apt update -y
+          sudo apt install docker.io -y
+          sudo usermod -aG docker $(whoami)
+          sudo docker run -d -p 80:8000 --name container marcotfm/zoologico-ada:latest
+
+  MyScalingPolicie:
+    Type: AWS::AutoScaling::ScalingPolicy
+    Properties:
+      AutoScalingGroupName: !Ref MyASG
+      PolicyType: TargetTrackingScaling
+      EstimatedInstanceWarmup: '10'
+      TargetTrackingConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: ALBRequestCountPerTarget
+          ResourceLabel: !Join 
+            '/' 
+            !GetAtt MyLoadBalancer.LoadBalancerFullName
+            !GetAtt MyLoadBalancerTargetGroup.TargetGroupFullName
+        TargetValue: 1
