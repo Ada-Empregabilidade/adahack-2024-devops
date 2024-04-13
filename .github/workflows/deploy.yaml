@@ -1,8 +1,12 @@
 name: Deploy Test
+
 on:
   push:
     branches:
       - main
+    paths:
+      - 'infraestructure.yaml'
+
 
 jobs:
   CI:
@@ -34,25 +38,9 @@ jobs:
     needs: CI
     steps:
       - name: Checkout code from main branch
-        uses: actions/checkout@v2
-
-      - name: Check CloudFormation Changes
-        id: cfn_changes
-        run: |
-          if git diff --exit-code HEAD^ HEAD -- infraestructure.yaml &> /dev/null; then
-            echo "No CFN changes detected."
-            changes_detected="false"
-          else
-              echo "CFN changes detected."
-              changes_detected="true"
-          fi
-          
-          echo "::set-output name=changes_detected::$changes_detected"
-    
-    
+        uses: actions/checkout@v2   
 
       - name: Configure AWS Credentials
-        if: steps.cfn_changes.outputs.changes_detected == 'true'
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -60,26 +48,8 @@ jobs:
           aws-region: us-east-1
 
       - name: Deploy VPC
-        if: steps.cfn_changes.outputs.changes_detected == 'true'
         uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
           name: infraestructure
           template: ./infraestructure.yaml
           no-fail-on-empty-changeset: "1"
-
-      - name: Get EC2 Instance IPs
-        if: steps.cfn_changes.outputs.changes_detected == 'false'
-        id: get_ec2_ips
-        run: |
-          aws cloudformation describe-stack-resources \
-            --stack-name infraestructure \
-            --query 'StackResources[?ResourceType==`AWS::EC2::Instance`].PhysicalResourceId' \
-            --output text > ec2_ips.txt
-
-      - name: SSH into EC2 and Run Docker
-        if: steps.cfn_changes.outputs.changes_detected == 'false'
-        run: |
-          echo ${{ secrets.PRIVATE_KEY }} >> .private-key
-          cat ec2_ips.txt | while read ip; do
-            ssh -i .private-key ec2-user@$ip 'docker pull marcotfm/zoologico-ada:latest && docker stop container && docker rm container && docker run -d --name container marcotfm/zoologico-ada:latest'
-          done
