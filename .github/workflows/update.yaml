@@ -46,9 +46,12 @@ jobs:
 
       - name: List EC2 Instances
         id: list_ec2_instances
+        env:
+          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           ec2_ips=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
           echo "$PRIVATE_KEY" > private.pem
+          chmod 600 private.pem
           for ip in $ec2_ips; do
             ssh -o StrictHostKeyChecking=no -i private.pem ubuntu@$ip 'sudo docker pull marcotfm/zoologico-ada:v6 && sudo docker stop container && sudo docker rm container && sudo docker run -d --name container marcotfm/zoologico-ada:v6'
           done
