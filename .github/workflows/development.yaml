@@ -50,20 +50,5 @@ jobs:
             name: infraestructure-test
             template: ./infraestructure-test.yaml
             no-fail-on-empty-changeset: "1"
-              
-        - name: Execute SSH Commands
-          env:
-            PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          run: |
-            for instance_id in $(aws cloudformation describe-stack-resources --stack-name SEU_STACK_NAME \
-                        --query "StackResources[?ResourceType == 'AWS::EC2::Instance'].PhysicalResourceId" \
-                        --output text); do
-              instance_ip=$(aws ec2 describe-instances --instance-ids $instance_id \
-                            --query "Reservations[0].Instances[0].PublicIpAddress" \
-                            --output text)
-              if ssh -o StrictHostKeyChecking=no -i $PRIVATE_KEY ubuntu@$instance_ip 'sudo docker ps -a --format {{.Names}} | grep -q container'; then
-                ssh -o StrictHostKeyChecking=no -i $PRIVATE_KEY ubuntu@$instance_ip 'sudo docker rm -f container'
-              fi
-              ssh -o StrictHostKeyChecking=no -i $PRIVATE_KEY ubuntu@$instance_ip 'sudo docker pull marcotfm/zoologico:latest && sudo docker run -d -p 80:8000 --name container marcotfm/zoologico:latest'
-            done
+
             
