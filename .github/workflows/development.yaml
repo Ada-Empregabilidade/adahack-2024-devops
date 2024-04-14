@@ -1,0 +1,54 @@
+name: "Create Environment Test"
+on:
+  push:
+    branches:
+      - development
+    paths:
+    - 'infraestructure-test.yaml'
+
+jobs:
+  CI:
+    runs-on: "ubuntu-latest"
+    steps:
+        - name: "Checkout"
+          uses: "actions/checkout@v3"
+          with:
+            ref: development
+
+        - name: Build Image docker
+          id: build_docker
+          uses: docker/login-action@v3
+          with:
+            username: ${{ secrets.DOCKER_USERNAME }}
+            password: ${{ secrets.DOCKER_PASSWORD }}
+
+        - name: "Build and Push"
+          uses: docker/build-push-action@v5
+          with:
+            context: backend/
+            push: true
+            tags: |
+                marcotfm/zoologico-ada:v1.1
+
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: CI
+    steps:
+        - name: Checkout code from main branch
+          uses: actions/checkout@v2   
+
+        - name: Configure AWS Credentials
+          uses: aws-actions/configure-aws-credentials@v1
+          with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-region: us-east-1
+
+        - name: Deploy VPC
+          uses: aws-actions/aws-cloudformation-github-deploy@v1
+          with:
+            name: infraestructure
+            template: ./infraestructure-test.yaml
+            no-fail-on-empty-changeset: "1"
+                
