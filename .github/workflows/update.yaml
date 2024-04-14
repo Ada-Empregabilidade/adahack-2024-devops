@@ -58,5 +58,5 @@ jobs:
             echo "$PRIVATE_KEY" > private.pem
             chmod 600 private.pem
             for ip in $EC2_IPS; do
-                ssh -o StrictHostKeyChecking=no -i private.pem ubuntu@$ip 'sudo docker pull marcotfm/zoologico-ada:v5 && sudo docker stop container && sudo docker rm container && sudo docker run -d -p 80:8000--name container marcotfm/zoologico-ada:v5'
+                ssh -o StrictHostKeyChecking=no -i private.pem ubuntu@$ip 'sudo docker pull marcotfm/zoologico-ada:v5 && sudo docker stop container && sudo docker rm container && sudo docker run -d -p 80:8000 --name container marcotfm/zoologico-ada:v5'
             done
