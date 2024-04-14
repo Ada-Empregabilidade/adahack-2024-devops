@@ -105,7 +105,7 @@ Resources:
             if sudo docker ps -a --format {{.Names}} | grep -q container; then
               sudo docker rm -f container
             fi
-              ssudo docker pull marcotfm/zoologico:v1.2 && sudo docker run -d -p 80:8000 --name container marcotfm/zoologico:v1.2'
+              sudo docker pull marcotfm/zoologico:v1.2 && sudo docker run -d -p 80:8000 --name container marcotfm/zoologico:v1.2'
             done
       Tags:
         - Key: stack
