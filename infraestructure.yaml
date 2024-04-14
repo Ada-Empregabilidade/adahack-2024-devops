@@ -93,7 +93,7 @@ Resources:
       LaunchTemplateData:
         ImageId: ami-080e1f13689e07408
         InstanceType: t2.micro
-        KeyName: adaHackaton
+        KeyName: hackatonAda
         SecurityGroupIds: 
           - !Ref Ec2SecurityGroup
         UserData: 
