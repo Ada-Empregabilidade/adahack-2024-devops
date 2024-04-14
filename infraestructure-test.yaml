@@ -35,7 +35,7 @@ Resources:
     Properties:
       VpcId: !Ref myVPC
       CidrBlock: 10.0.2.0/24
-      AvailabilityZone: us-east-1b
+      AvailabilityZone: us-east-1c
       MapPublicIpOnLaunch: true
       Tags:
        - Key: Name
