@@ -1,9 +1,11 @@
 name: Deploy Test
 
 on:
-  push:
+  pull_request:
+    types: [closed]
     branches:
       - main
+      - development
     paths:
       - 'infraestructure.yaml'
 
