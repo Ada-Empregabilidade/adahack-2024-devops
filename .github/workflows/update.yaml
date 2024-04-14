@@ -49,14 +49,5 @@ jobs:
         run: |
           ec2_ips=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
           echo "::set-output name=ec2_ips::$ec2_ips"
+          cat $ec2_ips
 
-      - name: SSH and deploy
-        env:
-            PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-            EC2_IPS: ${{ steps.list_ec2_instances.outputs.ec2_ips }}
-        run: |
-            echo "$PRIVATE_KEY" > private.pem
-            chmod 600 private.pem
-            for ip in $EC2_IPS; do
-                ssh -o StrictHostKeyChecking=no -i private.pem ubuntu@$ip 'sudo docker pull marcotfm/zoologico-ada:v5 && sudo docker stop container && sudo docker rm container && sudo docker run -d -p 80:8000 --name container marcotfm/zoologico-ada:v5'
-            done
