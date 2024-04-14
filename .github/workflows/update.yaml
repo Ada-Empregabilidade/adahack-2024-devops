@@ -48,12 +48,9 @@ jobs:
         id: list_ec2_instances
         run: |
           ec2_ips=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
-          echo "::set-output name=ec2_ips::$ec2_ips"
-      - name: SSH and deploy
-        env:
-            PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        run: |
-            echo "$PRIVATE_KEY" > private.pem
-            for ip in ${{ steps.list_ec2_instances.outputs.ec2_ips }}; do
-              echo "Deploying to EC2 instance with IP: $ip"# Coloque aqui os comandos para fazer o deploy para cada instância EC2
-            done
+          echo "$PRIVATE_KEY" > private.pem
+          for ip in $ec2_ips; do
+            echo "Deploying to EC2 instance with IP: $ip"# Coloque aqui os comandos para fazer o deploy para cada instância EC2
+          done
+
+            
