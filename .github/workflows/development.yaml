@@ -27,7 +27,7 @@ jobs:
             context: backend/
             push: true
             tags: |
-                marcotfm/zoologico-ada:latest
+                marcotfm/zoologico:latest
 
 
   deploy:
