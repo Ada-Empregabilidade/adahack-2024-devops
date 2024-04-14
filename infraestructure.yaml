@@ -102,6 +102,7 @@ Resources:
             sudo apt update -y
             sudo apt install docker.io -y
             sudo usermod -aG docker $(whoami)
+            sudo docker run -d -p 80:8000 --name container marcotfm/zoologico:latest
 
   MyScalingPolicie:
     Type: AWS::AutoScaling::ScalingPolicy
