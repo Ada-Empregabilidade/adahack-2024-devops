@@ -27,7 +27,7 @@ jobs:
         context: backend/
         push: true
         tags: |
-            marcotfm/zoologico-ada:v3
+            marcotfm/zoologico-ada:v4
             marcotfm/zoologico-ada:latest
     
   deploy:
@@ -58,5 +58,5 @@ jobs:
             echo "$PRIVATE_KEY" > private.pem
             chmod 600 private.pem
             for ip in $EC2_IPS; do
-                ssh -o StrictHostKeyChecking=no -i private.pem ubuntu@$ip 'sudo docker pull marcotfm/zoologico-ada:v3 && sudo docker stop container && sudo docker rm container && sudo docker run -d --name container marcotfm/zoologico-ada:latest'
+                ssh -o StrictHostKeyChecking=no -i private.pem ubuntu@$ip 'sudo docker pull marcotfm/zoologico-ada:v4 && sudo docker stop container && sudo docker rm container && sudo docker run -d --name container marcotfm/zoologico-ada:latest'
             done
