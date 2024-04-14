@@ -22,7 +22,7 @@ Resources:
     Properties:
       VpcId: !Ref myVPC
       CidrBlock: 10.0.1.0/24
-      AvailabilityZone: !Select [0, !GetAZs !Ref "AWS::Region"]
+      AvailabilityZone: us-east-1a
       MapPublicIpOnLaunch: true
       Tags:
        - Key: Name
@@ -35,7 +35,7 @@ Resources:
     Properties:
       VpcId: !Ref myVPC
       CidrBlock: 10.0.2.0/24
-      AvailabilityZone: !Select [1, !GetAZs !Ref "AWS::Region"]
+      AvailabilityZone: us-east-1b
       MapPublicIpOnLaunch: true
       Tags:
        - Key: Name
