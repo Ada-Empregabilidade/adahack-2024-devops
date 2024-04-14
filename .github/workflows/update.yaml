@@ -1,7 +1,9 @@
 name: Atualizar Ec2
 
 on:
-
+  push:
+    branches:
+      - main
   workflow_run:
     workflows: ["formation.yaml"]
     types:
@@ -9,6 +11,7 @@ on:
 
 jobs:
   CI:
+    if: github.event_name == 'workflow_run' && github.event.workflow == 'formation.yaml' || github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -33,6 +36,7 @@ jobs:
               marcotfm/zoologico:latest
 
   deploy:
+    if: github.event_name == 'workflow_run' && github.event.workflow == 'formation.yaml' || github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: CI
     runs-on: ubuntu-latest
     steps:
