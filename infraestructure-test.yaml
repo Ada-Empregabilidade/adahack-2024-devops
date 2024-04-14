@@ -102,11 +102,7 @@ Resources:
             #!/bin/bash
             sudo apt update -y
             sudo apt install docker.io -y
-            if sudo docker ps -a --format {{.Names}} | grep -q container; then
-              sudo docker rm -f container
-            fi
-              sudo docker pull marcotfm/zoologico:v1.2 && sudo docker run -d -p 80:8000 --name container marcotfm/zoologico:v1.2'
-            done
+            sudo docker run -d -p 80:8000 --name container marcotfm/zoologico:latest
       Tags:
         - Key: stack
           Value: dev
