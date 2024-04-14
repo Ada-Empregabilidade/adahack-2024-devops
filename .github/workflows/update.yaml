@@ -1,9 +1,7 @@
 name: Atualizar Ec2
 
 on:
-  push:
-    branches:
-      - main
+
   workflow_run:
     workflows: ["formation.yaml"]
     types:
