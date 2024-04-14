@@ -1,11 +1,98 @@
-Description: App deploy template v0.1
+Description: Development CloudFormation
 
-Resources:
+Resource:
+  myVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: 'true'
+      EnableDnsHostnames: 'true'
+      Tags:
+       - Key: stack
+         Value: prod
+
+  ipv6CidrBlock:
+    Type: AWS::EC2::VPCCidrBlock
+    Properties:
+      VpcId: !Ref myVPC
+      AmazonProvidedIpv6CidrBlock: true
+
+  publicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref myVPC
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: us-east-1a
+      MapPublicIpOnLaunch: true
+      Tags:
+       - Key: Name
+         Value: Public Subnet 1
+       - Key: stack
+         Value: prod
+
+  publicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref myVPC
+      CidrBlock: 10.0.2.0/24
+      AvailabilityZone: us-east-1c
+      MapPublicIpOnLaunch: true
+      Tags:
+       - Key: Name
+         Value: Public Subnet 2
+       - Key: stack
+         Value: prod
+
+  myInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: Internet Gateway
+        - Key: stack
+          Value: prod
+
+  myInternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref myVPC
+      InternetGatewayId: !Ref myInternetGateway
+
+  myPublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref myVPC
+      Tags:
+        - Key: Name
+          Value: Public Route Table
+        - Key: stack
+          Value: prod
+
+  myPublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: myInternetGatewayAttachment
+    Properties:
+      RouteTableId: !Ref myPublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref myInternetGateway
+
+  publicSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref publicSubnet1
+      RouteTableId: !Ref myPublicRouteTable
+
+  publicSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref publicSubnet2
+      RouteTableId: !Ref myPublicRouteTable
+
   Ec2SecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Allows HTTP and SSH for EC2
-      VpcId: vpc-05df277baf4e93b8b
+      VpcId: !Ref myVPC
       SecurityGroupIngress:
       - IpProtocol: tcp
         FromPort: 80
@@ -20,7 +107,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Group for application load balancer
-      VpcId: vpc-05df277baf4e93b8b
+      VpcId: !Ref myVPC
       GroupName: SGP-ALB
       SecurityGroupIngress:
       - IpProtocol: tcp
@@ -35,7 +122,7 @@ Resources:
       Port: 80
       Protocol: HTTP
       HealthCheckPort: 80
-      VpcId: vpc-05df277baf4e93b8b
+      VpcId: !Ref myVPC
       TargetType: instance
 
   MyLoadBalancer:
@@ -45,8 +132,8 @@ Resources:
       SecurityGroups:
         - !Ref MySecurityGroupALB
       Subnets:
-        - subnet-0b17283f1e058ea64
-        - subnet-0c54aeebf0a6238ec
+        - !Ref publicSubnet1
+        - !Ref publicSubnet2
 
   MyLoadBalancerListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
@@ -73,17 +160,20 @@ Resources:
       MinSize: '2'
       DesiredCapacity: '2'
       VPCZoneIdentifier:
-        - subnet-0b17283f1e058ea64
-        - subnet-0c54aeebf0a6238ec
+        - !Ref publicSubnet1
+        - !Ref publicSubnet2
       MetricsCollection:
         - Granularity: 1Minute
           Metrics: 
             - GroupMinSize
             - GroupMaxSize
       Tags: 
+        - Key: stack
+          Value: prod
         - Key: Name
-          Value: Hackaton
+          Value: Hackaton 
           PropagateAtLaunch: true
+        
 
   MyLaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
