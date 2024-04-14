@@ -5,12 +5,9 @@ on:
     branches:
       - main
   workflow_run:
-    workflows: ["Nome do Outro Workflow"]
+    workflows: ["formation.yaml"]
     types:
       - completed
-    # A ação só será executada se o outro workflow não estiver em execução ou se estiver concluído com sucesso
-    # Você pode ajustar esse comportamento conforme necessário
-
 
 jobs:
   CI:
