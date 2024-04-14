@@ -170,6 +170,7 @@ Resources:
       Tags: 
         - Key: stack
           Value: prod
+          PropagateAtLaunch: true
         - Key: Name
           Value: Hackaton 
           PropagateAtLaunch: true
