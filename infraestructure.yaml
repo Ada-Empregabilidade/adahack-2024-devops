@@ -1,6 +1,6 @@
 Description: Development CloudFormation
 
-Resource:
+Resources:
   myVPC:
     Type: AWS::EC2::VPC
     Properties:
@@ -35,7 +35,7 @@ Resource:
     Properties:
       VpcId: !Ref myVPC
       CidrBlock: 10.0.2.0/24
-      AvailabilityZone: us-east-1c
+      AvailabilityZone: us-east-1d
       MapPublicIpOnLaunch: true
       Tags:
        - Key: Name
@@ -170,6 +170,7 @@ Resource:
       Tags: 
         - Key: stack
           Value: prod
+          PropagateAtLaunch: true
         - Key: Name
           Value: Hackaton 
           PropagateAtLaunch: true
