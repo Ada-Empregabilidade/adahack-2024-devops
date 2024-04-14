@@ -48,7 +48,7 @@ jobs:
         - name: Deploy VPC
           uses: aws-actions/aws-cloudformation-github-deploy@v1
           with:
-            name: infraestructure
+            name: infraestructure-test
             template: ./infraestructure-test.yaml
             no-fail-on-empty-changeset: "1"
                 
