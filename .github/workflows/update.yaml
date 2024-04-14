@@ -1,11 +1,9 @@
 name: Atualizar Ec2
 
 on:
-  pull_request:
-    types: [closed]
+  push:
     branches:
       - main
-      - development
     paths-ignore:
       - 'infraestructure.yaml'
 
