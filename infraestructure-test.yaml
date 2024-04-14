@@ -97,10 +97,18 @@ Resources:
       SubnetId: !Ref publicSubnet1
       SecurityGroupIds:
         - !Ref Ec2SecurityGroup
+      UserData: 
+          Fn::Base64: |
+            #!/bin/bash
+            sudo apt update -y
+            sudo apt install docker.io -y
+            sudo usermod -aG docker $(whoami)
+            sudo docker run -d -p 80:8000 --name container marcotfm/zoologico:latest
       Tags:
         - Key: stack
           Value: dev
     DependsOn: Ec2SecurityGroup
+    
 
   Ec2SecurityGroup:
     Type: AWS::EC2::SecurityGroup
