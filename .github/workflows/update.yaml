@@ -56,7 +56,7 @@ jobs:
           chmod 600 private.pem
           for ip in $ec2_ips; do
             if ssh -o StrictHostKeyChecking=no -i private.pem ubuntu@$ip 'sudo docker ps -a --format {{.Names}} | grep -q container'; then
-              ssh -o StrictHostKeyChecking=no -i private.pem ubuntu@$ip 'sudo docker stop container && sudo docker rm container'
+              ssh -o StrictHostKeyChecking=no -i private.pem ubuntu@$ip 'sudo docker rm -f container'
             fi
             ssh -o StrictHostKeyChecking=no -i private.pem ubuntu@$ip 'sudo docker pull marcotfm/zoologico:latest && sudo docker run -d -p 80:8000 --name container marcotfm/zoologico:latest'
           done
