@@ -102,7 +102,7 @@ Resources:
             #!/bin/bash
             sudo apt update -y
             sudo apt install docker.io -y
-            sudo docker run -d -p 80:8000 --name container marcotfm/zoologico:latest
+            sudo docker run -d -p 80:8000 --name container marcotfm/zoologico:1.2
       Tags:
         - Key: stack
           Value: dev
