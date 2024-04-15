@@ -1,5 +1,7 @@
 # Nome dos integrantes
 
+- Diego Lopes 
+
 # Nome do Projeto
 
 # Proposta 
