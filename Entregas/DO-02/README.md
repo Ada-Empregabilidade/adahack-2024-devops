@@ -22,14 +22,14 @@ Ações realizadas:
 Constrói e envia a imagem Docker marcotfm/zoologico:latest.
 Implanta a infraestrutura definida no arquivo infraestructure-test.yaml.
 Executa comandos SSH para atualizar as instâncias EC2 com a nova imagem Docker.
-## 3. Deploy Test
+### 3. Deploy Test
 Este workflow é acionado quando há um push no branch main e o arquivo infraestructure.yaml é modificado. Ele é responsável por implantar a infraestrutura de produção e atualizar o ambiente de teste.
 
 Quando é acionado: Push para o branch main que modifica o arquivo infraestructure.yaml.
 Ações realizadas:
 Constrói e envia a imagem Docker marcotfm/zoologico-ada:latest.
 Implanta a infraestrutura definida no arquivo infraestructure.yaml.
-## 4. Atualizar Ec2
+### 4. Atualizar Ec2
 Este workflow é acionado quando há um push no branch main que não modifica o arquivo infraestructure.yaml. Ele atualiza as instâncias EC2 com a imagem Docker mais recente.
 
 Quando é acionado: Push para o branch main que não modifica o arquivo infraestructure.yaml.
@@ -39,7 +39,7 @@ Atualiza as instâncias EC2 com a nova imagem Docker.
 Como Utilizar
 Para utilizar estes workflows e ações em seu projeto, siga os passos abaixo:
 
-## Configurar Credenciais e Segredos
+### Configurar Credenciais e Segredos
 
 Configure as credenciais da AWS e os segredos do Docker Hub em suas configurações de repositório como variáveis de ambiente secretas.
 Modificar os Arquivos de Configuração
