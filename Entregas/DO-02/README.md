@@ -1,7 +1,13 @@
 # Nome dos integrantes
 
-- Diego Lopes
-- Gustavo Pinheiro
+- Danilo Argolo [![GitHub Badge](https://img.shields.io/badge/GitHub-Profile-blue?logo=github)](https://github.com/danargolo)
+- Diego Lopes [![GitHub Badge](https://img.shields.io/badge/GitHub-Profile-blue?logo=github)](https://github.com/Diegox0301)
+- Felipe Clemente [![GitHub Badge](https://img.shields.io/badge/GitHub-Profile-blue?logo=github)](https://github.com/felipemike)
+- Gracielly Ribeiro [![GitHub Badge](https://img.shields.io/badge/GitHub-Profile-blue?logo=github)](https://github.com/GraciellySRibeiro)
+- Gustavo Pinheiro [![GitHub Badge](https://img.shields.io/badge/GitHub-Profile-blue?logo=github)](https://github.com/Gustavopnhro)
+- Joniel Oliveira [![GitHub Badge](https://img.shields.io/badge/GitHub-Profile-blue?logo=github)](https://github.com/JonielOliveira)
+- Madson Rocha [![GitHub Badge](https://img.shields.io/badge/GitHub-Profile-blue?logo=github)](https://github.com/madsonsd)
+- Marco Tulio [![GitHub Badge](https://img.shields.io/badge/GitHub-Profile-blue?logo=github)](https://github.com/MarcoTulioFM)
 
 # Nome do Projeto
 
