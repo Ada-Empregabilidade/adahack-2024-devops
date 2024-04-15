@@ -5,6 +5,15 @@
 # Proposta 
 
 
+# Criação de usuários no IAM
+Foram criados oito usuários no IAM, cada um com acesso específico ao EC2 e ao CloudFormation.
+
+ Foi acessando o Console da AWS no serviço IAM. Lá foi criado um grupo chamado "CloudAdmins" e associou as políticas "AmazonEC2FullAccess" e "AWSCloudFormationFullAccess" a esse grupo.
+
+ Em seguida foram criados usuários, garantindo que eles tivessem acesso programático para usar a AWS CLI e as chaves de acesso correspondentes, eles foram adicionados ao grupo "CloudAdmins", garantindo que todos compartilhassem as mesmas permissões.
+
+ Depois que os usuários foram criados, foi dada as credenciais a cada membro, com isso, a equipe pôde colaborar de forma mais eficiente, implantando instâncias EC2 e gerenciando recursos com o CloudFormation
+
 # Automatização de Implantação e Gerenciamento de Infraestrutura
 Este repositório contém uma série de fluxos de trabalho (workflows) e ações (actions) para automatizar a implantação e o gerenciamento da infraestrutura de um projeto, bem como para a criação e atualização de ambientes de teste.
 
