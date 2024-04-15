@@ -1,0 +1,16 @@
+name: Destroy Infrastructure
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  destroy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Destroy Infrastructure
+        uses: aws-actions/aws-cloudformation-github-deploy@v1
+        with:
+          name: infraestructure-test
+          action: delete
