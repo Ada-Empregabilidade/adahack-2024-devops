@@ -1,6 +1,7 @@
 # Nome dos integrantes
 
-- Diego Lopes 
+- Diego Lopes
+- Gustavo Pinheiro
 
 # Nome do Projeto
 
@@ -15,6 +16,55 @@ Foram criados oito usuários no IAM, cada um com acesso específico ao EC2 e ao 
  Em seguida foram criados usuários, garantindo que eles tivessem acesso programático para usar a AWS CLI e as chaves de acesso correspondentes, eles foram adicionados ao grupo "CloudAdmins", garantindo que todos compartilhassem as mesmas permissões.
 
  Depois que os usuários foram criados, foi dada as credenciais a cada membro, com isso, a equipe pôde colaborar de forma mais eficiente, implantando instâncias EC2 e gerenciando recursos com o CloudFormation
+
+# Templates CloudFormation
+
+## 1. Ambiente de Desenvolvimento
+Template CloudFormation projetado para implantar um aplicativo em um ambiente de desenvolvimento na AWS. Ele inclui a criação de uma VPC, subnets públicas, um Internet Gateway, uma tabela de roteamento pública, uma instância EC2 e um grupo de segurança para as instância.
+
+### Recursos
+- Virtual Private Cloud (VPC):
+    - Subnets Públicas: Duas subnets públicas para hospedar a instância EC2 e outros recursos públicos;
+
+    - Internet Gateway: Um gateway para permitir a comunicação entre a VPC e a Internet;
+
+    - Tabela de Roteamento Pública: Uma tabela de roteamento para rotear o tráfego de saída para o Internet Gateway.
+
+
+- Grupo de Segurança: Um grupo de segurança para controlar o tráfego de rede para a instância EC2;
+
+- Instância EC2: Instância que hospedará o ambiente de desenvolvimento para validar as novas features do aplicativo.
+
+### Topologia
+
+
+## 2. Ambiente de Produção
+Este template CloudFormation foi projetado para criar uma infraestrutura para o ambiente de produção. Ele inclui a criação de uma VPC, subnets públicas, um Internet Gateway, uma tabela de roteamento pública, instâncias EC2, grupos de segurança, um Application Load Balancer (ALB), um Target Group, um Auto Scaling Group (ASG), uma Launch Template e políticas de dimensionamento.
+
+### Recursos
+- Virtual Private Cloud (VPC):
+    - Subnets Públicas: Duas subnets públicas para hospedar instâncias EC2 e outros recursos públicos;
+
+    - Internet Gateway: Um gateway para permitir a comunicação entre a VPC e a Internet;
+
+    - Tabela de Roteamento Pública: Uma tabela de roteamento para rotear o tráfego de saída para o Internet Gateway;
+
+- Instâncias EC2: Instâncias EC2 que serão lançadas nas subnets públicas;
+
+- Grupos de Segurança: Grupos de segurança com as menores autorizações possíveis para controlar o tráfego de rede para as instâncias EC2 e o Application Load Balancer;
+
+- Application Load Balancer (ALB): Um balanceador de carga para distribuir o tráfego entre as instâncias EC2;
+
+- Target Group: Um grupo de destino para o ALB para direcionar o tráfego para as instâncias EC2;
+
+- Auto Scaling Group (ASG): Um grupo de dimensionamento automático para ajustar o número de instâncias EC2 com base na demanda de tráfego;
+
+- Launch Template: Um modelo de lançamento para configurar as instâncias EC2 com a imagem, tipo de instância e outras configurações necessárias;
+
+- Política de Dimensionamento: Uma política de dimensionamento para ajustar o número de instâncias EC2 com base em métricas de tráfego.
+
+### Topologia
+
 
 # Automatização de Implantação e Gerenciamento de Infraestrutura
 Este repositório contém uma série de fluxos de trabalho (workflows) e ações (actions) para automatizar a implantação e o gerenciamento da infraestrutura de um projeto, bem como para a criação e atualização de ambientes de teste.
