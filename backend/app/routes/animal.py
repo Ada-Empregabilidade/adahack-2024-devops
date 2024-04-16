@@ -7,7 +7,7 @@ router = APIRouter()
 animals = [
     Animal(id=1, name="Leão", eats="Carne", plays="Corrida", lives="Savana"),
     Animal(id=2, name="Girafa", eats="Folhas", plays="Alcançar alturas", lives="Savana"),
-    Animal(id=4, name="Golfinho", eats="Peixes", plays="Saltos", lives="Oceanos"),
+    Animal(id=3, name="Urso Panda", eats="Bambu", plays="Rolagem", lives="Florestas"),
     Animal(id=5, name="Águia", eats="Peixes", plays="Voo alto", lives="Montanhas"),
     Animal(id=6, name="Tigre", eats="Carne", plays="Espreita", lives="Florestas"),
     Animal(id=7, name="Coala", eats="Folhas de eucalipto", plays="Escalada", lives="Florestas"),
