@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'infraestructure.yaml'
+      - 'backend/**'
   workflow_dispatch:
 
 
