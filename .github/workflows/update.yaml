@@ -48,17 +48,19 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Update Docker Image on EC2 instances
+      - name: Get Instance IDs
+        id: get_instance_ids
         run: |
-          # Obtendo a ID da pilha do CloudFormation
           stack_name="infraestructure"
           stack_id=$(aws cloudformation describe-stacks --stack-name $stack_name --query 'Stacks[0].StackId' --output text)
 
-          # Obtendo as instâncias EC2 da pilha
-          instance_ids=$(aws cloudformation describe-stack-resources --stack-name $stack_id --query 'StackResources[?ResourceType == `AWS::EC2::Instance`].PhysicalResourceId' --output text)
+          echo "::set-output name=instance_ids::$(aws cloudformation describe-stack-resources --stack-name $stack_id --query 'StackResources[?ResourceType == `AWS::EC2::Instance`].PhysicalResourceId' --output text)"
 
-          # Atualizando a imagem Docker em cada instância
+      - name: Delete Instances One by One
+        run: |
+          instance_ids=$(echo ${{ steps.get_instance_ids.outputs.instance_ids }} | tr '\n' ' ')
           for instance_id in $instance_ids; do
-            # Atualizando a imagem Docker
-            aws ssm send-command --document-name "AWS-RunShellScript" --targets "Key=instanceids,Values=$instance_id" --parameters commands="docker pull marcotfm/zoologico:latest && docker stop container && docker run -d -p 80:8000 --name container marcotfm/zoologico:latest"
+            # Excluir a instância e aguardar até que ela seja excluída
+            aws ec2 terminate-instances --instance-ids $instance_id
+            aws ec2 wait instance-terminated --instance-ids $instance_id
           done
