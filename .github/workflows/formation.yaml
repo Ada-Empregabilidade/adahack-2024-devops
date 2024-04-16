@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'infraestructure.yaml'
+  workflow_dispatch:
 
 
 jobs:
