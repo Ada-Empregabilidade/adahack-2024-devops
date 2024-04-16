@@ -4,8 +4,7 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'backend/**'  # Monitora alterações na pasta backend
+
 
   workflow_dispatch:
 
