@@ -176,16 +176,17 @@ Resources:
           PropagateAtLaunch: true
         
 
-  MyASG:
-    Type: AWS::AutoScaling::AutoScalingGroup
-    Properties:
-      AutoScalingGroupName: MyAutoScalingGroupName
-      UpdatePolicy:
-      AutoScalingRollingUpdate:
-        MinInstancesInService: 1
-        MaxBatchSize: 1
-        PauseTime: PT15M  # Tempo de pausa entre atualizações
-        WaitOnResourceSignals: true
+    MyASG:
+      Type: AWS::AutoScaling::AutoScalingGroup
+      Properties:
+        AutoScalingGroupName: MyAutoScalingGroupName
+        UpdatePolicy:
+          AutoScalingRollingUpdate:
+            MinInstancesInService: 1
+            MaxBatchSize: 1
+            PauseTime: PT15M  # Tempo de pausa entre atualizações
+            WaitOnResourceSignals: true
+
 
   MyLaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
