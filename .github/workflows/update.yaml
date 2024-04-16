@@ -54,4 +54,6 @@ jobs:
           stack_id=$(aws cloudformation describe-stacks --stack-name $stack_name --query 'Stacks[0].StackId' --output text)
           asg_name=$(aws cloudformation describe-stack-resources --stack-name $stack_id --logical-resource-id MyASG --query 'StackResources[0].PhysicalResourceId' --output text)
 
+          cat $stack_id
+          cat $asg_name
           aws autoscaling start-instance-refresh --auto-scaling-group-name $asg_name --preferences '{"MinHealthyPercentage": 50, "InstanceWarmup": 300}'
