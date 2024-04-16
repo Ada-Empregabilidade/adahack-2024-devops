@@ -126,6 +126,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       Handler: index.handler
+      Runtime: python3.8
       Role: !GetAtt UpdateDockerLambdaExecutionRole.Arn
       Code:
         ZipFile: |
