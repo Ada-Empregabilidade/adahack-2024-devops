@@ -1,5 +1,3 @@
-Description: App deploy template v0.1
-
 Resources:
   myVPC:
     Type: AWS::EC2::VPC
@@ -124,57 +122,56 @@ Resources:
           ToPort: 22
           CidrIp: 0.0.0.0/0
 
+  UpdateDockerLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: index.handler
+      Role: !GetAtt UpdateDockerLambdaExecutionRole.Arn
+      Code:
+        ZipFile: |
+          import boto3
+          import logging
 
-    UpdateDockerLambdaFunction:
-      Type: AWS::Lambda::Function
-      Properties:
-        Handler: index.handler
-        Role: !GetAtt UpdateDockerLambdaExecutionRole.Arn
-        Code:
-          ZipFile: |
-            import boto3
-            import logging
+          logger = logging.getLogger()
+          logger.setLevel(logging.INFO)
 
-            logger = logging.getLogger()
-            logger.setLevel(logging.INFO)
+          def handler(event, context):
+              ec2 = boto3.client('ec2')
 
-            def handler(event, context):
-                ec2 = boto3.client('ec2')
+              instance_id = event['detail']['instance-id']
 
-                instance_id = event['detail']['instance-id']
+              response = ec2.describe_instances(InstanceIds=[instance_id])
+              tags = response['Reservations'][0]['Instances'][0]['Tags']
 
-                response = ec2.describe_instances(InstanceIds=[instance_id])
-                tags = response['Reservations'][0]['Instances'][0]['Tags']
+              for tag in tags:
+                  if tag['Key'] == 'desligamento' and tag['Value'] == 'true':
+                      # Parar o contêiner Docker existente
+                      stop_response = ec2.send_command(
+                          InstanceIds=[instance_id],
+                          DocumentName='AWS-RunShellScript',
+                          Parameters={'commands': ['sudo docker stop container']}
+                      )
+                      logger.info(f"Comando para parar o contêiner enviado para a instância {instance_id}: {stop_response}")
 
-                for tag in tags:
-                    if tag['Key'] == 'desligamento' and tag['Value'] == 'true':
-                        # Parar o contêiner Docker existente
-                        stop_response = ec2.send_command(
-                            InstanceIds=[instance_id],
-                            DocumentName='AWS-RunShellScript',
-                            Parameters={'commands': ['sudo docker stop container']}
-                        )
-                        logger.info(f"Comando para parar o contêiner enviado para a instância {instance_id}: {stop_response}")
+                      # Atualizar a imagem do Docker
+                      pull_response = ec2.send_command(
+                          InstanceIds=[instance_id],
+                          DocumentName='AWS-RunShellScript',
+                          Parameters={'commands': ['sudo docker pull marcotfm/zoologico-hackaton:latest']}
+                      )
+                      logger.info(f"Comando para atualizar a imagem Docker enviado para a instância {instance_id}: {pull_response}")
 
-                        # Atualizar a imagem do Docker
-                        pull_response = ec2.send_command(
-                            InstanceIds=[instance_id],
-                            DocumentName='AWS-RunShellScript',
-                            Parameters={'commands': ['sudo docker pull marcotfm/zoologico-hackaton:latest']}
-                        )
-                        logger.info(f"Comando para atualizar a imagem Docker enviado para a instância {instance_id}: {pull_response}")
+                      # Iniciar um novo contêiner Docker
+                      run_response = ec2.send_command(
+                          InstanceIds=[instance_id],
+                          DocumentName='AWS-RunShellScript',
+                          Parameters={'commands': ['sudo docker run -d -p 80:8000 --name container marcotfm/zoologico-hackaton:latest']}
+                      )
+                      logger.info(f"Comando para iniciar um novo contêiner Docker enviado para a instância {instance_id}: {run_response}")
 
-                        # Iniciar um novo contêiner Docker
-                        run_response = ec2.send_command(
-                            InstanceIds=[instance_id],
-                            DocumentName='AWS-RunShellScript',
-                            Parameters={'commands': ['sudo docker run -d -p 80:8000 --name container marcotfm/zoologico-hackaton:latest']}
-                        )
-                        logger.info(f"Comando para iniciar um novo contêiner Docker enviado para a instância {instance_id}: {run_response}")
-
-                        break
-                else:
-                    logger.info(f"A instância {instance_id} não possui a tag 'desligamento'.")
+                      break
+              else:
+                  logger.info(f"A instância {instance_id} não possui a tag 'desligamento'.")
 
   UpdateDockerLambdaExecutionRole:
     Type: AWS::IAM::Role
