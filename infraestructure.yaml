@@ -152,11 +152,11 @@ Resources:
     Properties:
       AutoScalingGroupName: MyAutoScalingGroupName
       UpdatePolicy:
-      AutoScalingRollingUpdate:
-        MinInstancesInService: 1
-        MaxBatchSize: 1
-        PauseTime: PT15M  # Tempo de pausa entre atualizações
-        WaitOnResourceSignals: true
+        AutoScalingRollingUpdate:
+          MinInstancesInService: 1
+          MaxBatchSize: 1
+          PauseTime: PT15M  # Tempo de pausa entre atualizações
+          WaitOnResourceSignals: true
       TargetGroupARNs:
         - !Ref MyLoadBalancerTargetGroup
       LaunchTemplate: 
