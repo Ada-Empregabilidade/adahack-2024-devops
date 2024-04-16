@@ -31,8 +31,8 @@ jobs:
           context: backend/
           push: true
           tags: |
-            marcotfm/zoologico-ada:v1
-            marcotfm/zoologico-ada:latest
+            marcotfm/zoologico-hackaton:v1
+            marcotfm/zoologico-hackaton:latest
 
   deploy:
     runs-on: ubuntu-latest
