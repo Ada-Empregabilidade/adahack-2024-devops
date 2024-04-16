@@ -1,4 +1,4 @@
-name: Deploy Test
+name: Update Ec2
 
 on:
   push:
