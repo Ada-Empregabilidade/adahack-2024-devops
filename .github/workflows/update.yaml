@@ -48,20 +48,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Get Instance IDs
-        id: get_instance_ids
+      - name: Update Auto Scaling Group
         run: |
           stack_name="infraestructure"
           stack_id=$(aws cloudformation describe-stacks --stack-name $stack_name --query 'Stacks[0].StackId' --output text)
+          asg_name=$(aws cloudformation describe-stack-resources --stack-name $stack_id --logical-resource-id MyASG --query 'StackResources[0].PhysicalResourceId' --output text)
 
-          echo "::set-output name=instance_ids::$(aws cloudformation describe-stack-resources --stack-name $stack_id --query 'StackResources[?ResourceType == `AWS::EC2::Instance`].PhysicalResourceId' --output text)"
-
-      - name: Terminate Instances
-        run: |
-          instance_ids=$(echo ${{ steps.get_instance_ids.outputs.instance_ids }} | tr '\n' ' ')
-          for instance_id in $instance_ids; do
-            # Excluir a instância
-            aws ec2 terminate-instances --instance-ids $instance_id
-            # Aguardar até que a instância seja excluída
-            aws ec2 wait instance-terminated --instance-ids $instance_id
-          done
+          aws autoscaling start-instance-refresh --auto-scaling-group-name $asg_name --preferences '{"MinHealthyPercentage": 50, "InstanceWarmup": 300}'
