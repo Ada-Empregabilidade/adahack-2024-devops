@@ -47,11 +47,15 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Start Instance Refresh
+      - name: Get Auto Scaling Group ID
+        id: get_asg_id
         run: |
           stack_name="infraestructure"
           stack_id=$(aws cloudformation describe-stacks --stack-name $stack_name --query 'Stacks[0].StackId' --output text)
           asg_name=$(aws cloudformation describe-stack-resources --stack-name $stack_id --logical-resource-id MyASG --query 'StackResources[0].PhysicalResourceId' --output text)
+          echo "::set-output name=asg_id::$asg_name"
 
-          # Iniciar a atualização de instância
-          aws autoscaling start-instance-refresh --auto-scaling-group-name $asg_name --preferences '{"MinHealthyPercentage": 50, "InstanceWarmup": 300}'
+      - name: Start Instance Refresh
+        run: |
+          asg_id=${{ steps.get_asg_id.outputs.asg_id }}
+          aws autoscaling start-instance-refresh --auto-scaling-group-name $asg_id --preferences '{"MinHealthyPercentage": 50, "InstanceWarmup": 300}'
