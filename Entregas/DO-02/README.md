@@ -12,7 +12,8 @@
 # Nome do Projeto
 
 # Proposta 
-![Arquitetura](file:///C:/Users/meu-e/Downloads/Diagrama%20.drawio.svg)
+![Diagrama ci_cd drawio](https://github.com/Hackaton-Ada/adahack-2024-devops/assets/132016875/23926dfc-78ec-4112-adb1-4bd7828351cf)
+
 
 # Criação de usuários no IAM
 Foram criados oito usuários no IAM, cada um com acesso específico ao EC2 e ao CloudFormation.
