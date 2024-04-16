@@ -12,7 +12,7 @@
 # Nome do Projeto
 
 # Proposta 
-[![Arquitetura](file:///C:/Users/meu-e/Downloads/Diagrama%20.drawio.svg)
+![Arquitetura](file:///C:/Users/meu-e/Downloads/Diagrama%20.drawio.svg)
 
 # Criação de usuários no IAM
 Foram criados oito usuários no IAM, cada um com acesso específico ao EC2 e ao CloudFormation.
