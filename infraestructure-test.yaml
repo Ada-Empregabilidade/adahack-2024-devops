@@ -121,37 +121,6 @@ Resources:
           ToPort: 22
           CidrIp: 0.0.0.0/0
 
-LambdaExecutionRole:
-  Type: AWS::IAM::Role
-  Properties:
-    AssumeRolePolicyDocument:
-      Version: '2012-10-17'
-      Statement:
-        - Effect: Allow
-          Principal:
-            Service: lambda.amazonaws.com
-          Action: sts:AssumeRole
-    Policies:
-      - PolicyName: lambda_execution_policy
-        PolicyDocument:
-          Version: '2012-10-17'
-          Statement:
-            - Effect: Allow
-              Action:
-                - logs:CreateLogGroup
-                - logs:CreateLogStream
-                - logs:PutLogEvents
-                - ec2:TerminateInstances  # Permissão para terminar instâncias EC2
-              Resource: 
-                - arn:aws:logs:*:*:*
-                - "*"  # Permissão para todos os recursos EC2
-
-            - Effect: Allow
-              Action:
-                - ec2:DescribeInstances
-                - ec2:StopInstances
-              Resource: "*"
-
   LambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -172,7 +141,10 @@ LambdaExecutionRole:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
-                Resource: arn:aws:logs:*:*:*
+                  - ec2:TerminateInstances  # Permissão para terminar instâncias EC2
+                Resource: 
+                  - arn:aws:logs:*:*:*
+                  - "*"  # Permissão para todos os recursos EC2
               - Effect: Allow
                 Action:
                   - ec2:DescribeInstances
@@ -213,7 +185,7 @@ LambdaExecutionRole:
     Type: AWS::Events::Rule
     Properties:
       Description: "Rule to trigger Lambda at midnight"
-      ScheduleExpression: "cron(33 4 * * ? *)"
+      ScheduleExpression: "cron(35 4 * * ? *)"
       State: "ENABLED"
       Targets:
         - Arn: !GetAtt LambdaFunction.Arn
