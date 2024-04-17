@@ -159,16 +159,20 @@ Resources:
 
           def lambda_handler(event, context):
               ec2 = boto3.client('ec2')
-              instances = ec2.describe_instances(Filters=[{'Name': 'tag-key', 'Values': ['dev']}])
+              instances = ec2.describe_instances(Filters=[
+                  {'Name': 'tag:stack', 'Values': ['dev']},
+                  {'Name': 'instance-state-name', 'Values': ['running']}
+              ])
 
               for reservation in instances['Reservations']:
                   for instance in reservation['Instances']:
                       instance_id = instance['InstanceId']
-                      ec2.stop_instances(InstanceIds=[instance_id])
-              
+
+                      ec2.terminate_instances(InstanceIds=[instance_id])
+
               return {
                   'statusCode': 200,
-                  'body': 'Instances stopped successfully!'
+                  'body': 'Instances terminate successfully!'
               }
 
       Runtime: python3.8
@@ -177,7 +181,7 @@ Resources:
     Type: AWS::Events::Rule
     Properties:
       Description: "Rule to trigger Lambda at midnight"
-      ScheduleExpression: "cron(0 0 * * ? *)"
+      ScheduleExpression: "cron(23 4 * * ? *)"
       State: "ENABLED"
       Targets:
         - Arn: !GetAtt LambdaFunction.Arn
