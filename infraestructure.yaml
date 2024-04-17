@@ -174,12 +174,12 @@ Resources:
         - Key: Name
           Value: Hackaton 
           PropagateAtLaunch: true
-      UpdatePolicy:
-        AutoScalingRollingUpdate:
-          MinInstancesInService: 1
-          MaxBatchSize: 1
-          PauseTime: PT15M
-          WaitOnResourceSignals: true
+    UpdatePolicy:
+      AutoScalingRollingUpdate:
+        MinInstancesInService: 1
+        MaxBatchSize: 1
+        PauseTime: PT15M
+        WaitOnResourceSignals: true
 
 
 
