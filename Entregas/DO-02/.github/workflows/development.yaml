@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - development
+    paths:
+      - 'infraestructure-test.yaml'
+      - 'backend/**'
 
 
 jobs:

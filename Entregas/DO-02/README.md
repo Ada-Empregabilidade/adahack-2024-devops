@@ -102,13 +102,13 @@ Quando é acionado: Push para o branch main que modifica o arquivo infraestructu
 Ações realizadas:
 Constrói e envia a imagem Docker marcotfm/zoologico-ada:latest.
 Implanta a infraestrutura definida no arquivo infraestructure.yaml.
-### 4. Atualizar Ec2
-Este workflow é acionado quando há um push no branch main que não modifica o arquivo infraestructure.yaml. Ele atualiza as instâncias EC2 com a imagem Docker mais recente.
+### 4. Update EC2
+Este workflow é acionado quando há um push no branch main e que faca uma modificacao em arquivos da pasta backend. Ele atualiza as instâncias EC2 com a imagem Docker mais recente.
 
-Quando é acionado: Push para o branch main que não modifica o arquivo infraestructure.yaml.
+Quando é acionado: Push para o branch main que modifica arquivos na pasta backend.
 Ações realizadas:
 Constrói e envia a imagem Docker marcotfm/zoologico:latest.
-Atualiza as instâncias EC2 com a nova imagem Docker.
+Atualiza as instâncias com rolling update.
 Como Utilizar
 Para utilizar estes workflows e ações em seu projeto, siga os passos abaixo:
 
@@ -120,11 +120,15 @@ Modificar os Arquivos de Configuração
 Personalize os arquivos infraestructure-test.yaml e infraestructure.yaml de acordo com os requisitos da sua infraestrutura.
 Configurar os Eventos de Acionamento
 
-Modifique os eventos de acionamento dos workflows conforme necessário, como branches específicos ou cron jobs.
-Adaptar Comandos SSH
 
-Se necessário, adapte os comandos SSH nos workflows para interagir com suas instâncias EC2.
-Testar e Implantar
+## Descrição da Função Lambda
+A função Lambda definida neste template é responsável por terminar instâncias EC2 do ambiente de teste que sao marcadas com a tag "stack" igual a "dev". Essa função é acionada diariamente à meia-noite (UTC) por meio de uma regra de agendamento (Schedule Rule) configurada para esse fim.
 
-Após configurar e personalizar os arquivos e workflows, teste-os em um ambiente de desenvolvimento antes de implantá-los em produção.
+# Funcionamento
+Quando a função Lambda é acionada pelo evento programado, ela utiliza a biblioteca boto3 para interagir com a AWS. Primeiramente, a função faz uma chamada para o serviço EC2 para obter uma lista de todas as instâncias em execução que possuem a tag "stack" com valor "dev" e estão marcadas como "running" (em execução).
+
+Em seguida, itera sobre cada instância retornada e obtém o ID da instância. Com esses IDs, a função utiliza o serviço EC2 novamente para terminar (desligar) essas instâncias.
+
+Após a conclusão da terminação das instâncias, a função retorna um objeto JSON com um código de status HTTP 200 indicando que as instâncias foram terminadas com sucesso.
+
 >>>>>>> main
