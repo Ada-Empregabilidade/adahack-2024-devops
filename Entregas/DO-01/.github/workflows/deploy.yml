@@ -1,0 +1,48 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches:
+      - develop
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Configure aws credentials
+      uses: aws-actions/configure-aws-credentials@v1.7.0
+      with:
+        role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
+        role-session-name: ${{ secrets.ROLE_SESSION_NAME }}
+        aws-region: "us-west-2"
+
+    - name: Update Dockerrun.aws.json
+      run: |
+        echo '{"AWSEBDockerrunVersion": "1","Image": {"Name": "${{ secrets.AWS_ECR_IMAGE }}:${{ github.sha }}","Update": "true"},"Ports": [{"ContainerPort": 8000}]}' > Dockerrun.aws.json
+
+    - name: Generate new zip
+      run: |
+        zip -r env/production/production.zip Dockerrun.aws.json
+
+    - name: terraform init
+      run: |
+        cd env/production
+        terraform init \
+        -backend-config="bucket=${{ secrets.AWS_S3_BUCKET_NAME }}" \
+        -backend-config="key=${{ secrets.AWS_S3_BUCKET_KEY_NAME }}" \
+        -backend-config="region=us-west-2"
+
+    - name: Apply Terraform
+      run: |
+        cd env/production
+        terraform apply -auto-approve || true
+
+    - name: Update Elastic Beanstalk environment
+      run: |
+        aws elasticbeanstalk update-environment --environment-name enviroment-for-production --version-label enviroment-for-production

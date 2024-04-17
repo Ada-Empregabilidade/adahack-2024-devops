@@ -1,0 +1,36 @@
+name: 'Release'
+on:
+  pull_request:
+    types:
+      - closed
+    branches: [ develop ]
+permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+jobs:
+  Release:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: .
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+      - name: Configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v1.7.0
+        with:
+          role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
+          role-session-name: ${{ secrets.ROLE_SESSION_NAME }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: ./backend
+          push: true
+          tags: |
+            ${{format('{0}:{1}', secrets.AWS_ECR_IMAGE, github.sha)}}

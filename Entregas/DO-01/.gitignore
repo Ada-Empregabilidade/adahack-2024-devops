@@ -1,0 +1,31 @@
+# Arquivos e pastas do ambiente virtual
+envApiAnimal/
+
+# Arquivos de cache Python
+__pycache__/
+*.py[cod]
+
+# Arquivos de pacotes
+*.egg-info/
+dist/
+
+# Arquivos do editor
+.vscode/
+.idea/
+
+# Arquivos de sistema operacional
+.DS_Store
+
+# Outros arquivos e pastas que podem conter informações sensíveis ou desnecessárias
+*.log
+.env
+
+/venv
+
+### Terraform ###
+# Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
