@@ -185,7 +185,7 @@ Resources:
     Type: AWS::Events::Rule
     Properties:
       Description: "Rule to trigger Lambda at midnight"
-      ScheduleExpression: "cron(33 4 * * ? *)"
+      ScheduleExpression: "cron(52 4 * * ? *)"
       State: "ENABLED"
       Targets:
         - Arn: !GetAtt LambdaFunction.Arn
