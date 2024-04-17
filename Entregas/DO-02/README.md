@@ -95,8 +95,8 @@ Ações realizadas:
 Constrói e envia a imagem Docker marcotfm/zoologico:latest.
 Implanta a infraestrutura definida no arquivo infraestructure-test.yaml.
 Executa comandos SSH para atualizar as instâncias EC2 com a nova imagem Docker.
-### 3. Deploy Test
-Este workflow é acionado quando há um push no branch main e o arquivo infraestructure.yaml é modificado. Ele é responsável por implantar a infraestrutura de produção e atualizar o ambiente de teste.
+### 3. Deploy CloudFormation
+Este workflow é acionado quando há um push no branch main e o arquivo infraestructure.yaml é modificado, ou de forma manual. Ele é responsável por implantar a infraestrutura de produção.
 
 Quando é acionado: Push para o branch main que modifica o arquivo infraestructure.yaml.
 Ações realizadas:
