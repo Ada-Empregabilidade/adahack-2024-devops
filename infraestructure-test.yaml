@@ -170,3 +170,16 @@ Resources:
 
       Runtime: python3.8
       Timeout: 30
+      
+  CloudWatchEventRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: "Trigger Lambda to stop EC2 instances daily"
+      ScheduleExpression: "cron(0 0 * * ? *)"  # Executa diariamente à meia-noite
+      State: "ENABLED"
+  
+  CloudWatchEventTarget:
+    Type: AWS::Events::Target
+    Properties:
+      Rule: !Ref CloudWatchEventRule
+      Arn: !GetAtt StopEc2LambdaFunction.Arn
