@@ -151,12 +151,6 @@ Resources:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
       AutoScalingGroupName: MyAutoScalingGroupName
-      UpdatePolicy:
-        AutoScalingRollingUpdate:
-          MinInstancesInService: 1
-          MaxBatchSize: 1
-          PauseTime: PT15M  # Tempo de pausa entre atualizações
-          WaitOnResourceSignals: true
       TargetGroupARNs:
         - !Ref MyLoadBalancerTargetGroup
       LaunchTemplate: 
@@ -180,6 +174,12 @@ Resources:
         - Key: Name
           Value: Hackaton 
           PropagateAtLaunch: true
+      UpdatePolicy:
+        AutoScalingRollingUpdate:
+          MinInstancesInService: 1
+          MaxBatchSize: 1
+          PauseTime: PT15M
+          WaitOnResourceSignals: true
 
 
 
