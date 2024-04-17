@@ -131,48 +131,54 @@ Resources:
             Principal:
               Service: lambda.amazonaws.com
             Action: sts:AssumeRole
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-        - arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess
       Policies:
-        - PolicyName: StopEC2Policy
+        - PolicyName: lambda_execution_policy
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
               - Effect: Allow
                 Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: arn:aws:logs:*:*:*
+              - Effect: Allow
+                Action:
+                  - ec2:DescribeInstances
                   - ec2:StopInstances
                 Resource: "*"
 
-  StopEc2LambdaFunction:
+  LambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
-      Handler: stop_ec2_instance.lambda_handler
+      Handler: index.lambda_handler
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
         ZipFile: |
           import boto3
 
           def lambda_handler(event, context):
-              ec2_client = boto3.client('ec2')
-
-              instances = ec2_client.describe_instances(Filters=[{'Name': 'tag:stack', 'Values': ['dev']}])
-
-              instance_ids = []
+              ec2 = boto3.client('ec2')
+              instances = ec2.describe_instances(Filters=[{'Name': 'tag-key', 'Values': ['dev']}])
 
               for reservation in instances['Reservations']:
                   for instance in reservation['Instances']:
-                      instance_ids.append(instance['InstanceId'])
-
-              response = ec2_client.stop_instances(InstanceIds=instance_ids)
-
-              return response
+                      instance_id = instance['InstanceId']
+                      ec2.stop_instances(InstanceIds=[instance_id])
+              
+              return {
+                  'statusCode': 200,
+                  'body': 'Instances stopped successfully!'
+              }
 
       Runtime: python3.8
-      Timeout: 30
-      Events:
-        Schedule:
-          Type: Schedule
-          Properties:
-            Schedule: "cron(0 0 * * ? *)"  # Executa diariamente à meia-noite
-            Enabled: true
+
+  ScheduleRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: "Rule to trigger Lambda at midnight"
+      ScheduleExpression: "cron(0 0 * * ? *)"
+      State: "ENABLED"
+      Targets:
+        - Arn: !GetAtt LambdaFunction.Arn
+          Id: "TargetFunctionV1"
